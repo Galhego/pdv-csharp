@@ -26,14 +26,27 @@ namespace pdv
         {
             InitializeComponent();
             header.MouseDown += Form_MouseDown;
+            this.Padding = new Padding(1);
+
         }
 
         private void Form_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+                if (e.Clicks == 2)
+                {
+                    // Clique duplo detectado
+                    if (this.WindowState == FormWindowState.Normal)
+                        this.WindowState = FormWindowState.Maximized;
+                    else
+                        this.WindowState = FormWindowState.Normal;
+                }
+                else
+                {
+                    ReleaseCapture();
+                    SendMessage(Handle, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+                }
             }
         }
 
@@ -68,7 +81,6 @@ namespace pdv
 
         protected override void WndProc(ref Message m)
         {
-            const int RESIZE_HANDLE_SIZE = 10;
             const int WM_NCHITTEST = 0x84;
             const int HTCLIENT = 1;
             const int HTLEFT = 10;
@@ -84,37 +96,59 @@ namespace pdv
             {
                 base.WndProc(ref m);
 
-                var screenPoint = new Point(m.LParam.ToInt32());
-                var clientPoint = this.PointToClient(screenPoint);
+                int RESIZE_HANDLE_SIZE = 12; // Deixei maior para ser confortável
+                var cursorPoint = PointToClient(Cursor.Position);
 
-                if (clientPoint.Y <= RESIZE_HANDLE_SIZE)
+                bool isTop = cursorPoint.Y >= 0 && cursorPoint.Y <= RESIZE_HANDLE_SIZE;
+                bool isBottom = cursorPoint.Y >= (ClientSize.Height - RESIZE_HANDLE_SIZE) && cursorPoint.Y <= ClientSize.Height;
+                bool isLeft = cursorPoint.X >= 0 && cursorPoint.X <= RESIZE_HANDLE_SIZE;
+                bool isRight = cursorPoint.X >= (ClientSize.Width - RESIZE_HANDLE_SIZE) && cursorPoint.X <= ClientSize.Width;
+
+                if (isTop && isLeft)
                 {
-                    if (clientPoint.X <= RESIZE_HANDLE_SIZE)
-                        m.Result = (IntPtr)HTTOPLEFT;
-                    else if (clientPoint.X < (Size.Width - RESIZE_HANDLE_SIZE))
-                        m.Result = (IntPtr)HTTOP;
-                    else
-                        m.Result = (IntPtr)HTTOPRIGHT;
+                    m.Result = (IntPtr)HTTOPLEFT;
+                    return;
                 }
-                else if (clientPoint.Y <= (Size.Height - RESIZE_HANDLE_SIZE))
+                else if (isTop && isRight)
                 {
-                    if (clientPoint.X <= RESIZE_HANDLE_SIZE)
-                        m.Result = (IntPtr)HTLEFT;
-                    else if (clientPoint.X < (Size.Width - RESIZE_HANDLE_SIZE))
-                        m.Result = (IntPtr)HTCLIENT;
-                    else
-                        m.Result = (IntPtr)HTRIGHT;
+                    m.Result = (IntPtr)HTTOPRIGHT;
+                    return;
+                }
+                else if (isBottom && isLeft)
+                {
+                    m.Result = (IntPtr)HTBOTTOMLEFT;
+                    return;
+                }
+                else if (isBottom && isRight)
+                {
+                    m.Result = (IntPtr)HTBOTTOMRIGHT;
+                    return;
+                }
+                else if (isLeft)
+                {
+                    m.Result = (IntPtr)HTLEFT;
+                    return;
+                }
+                else if (isRight)
+                {
+                    m.Result = (IntPtr)HTRIGHT;
+                    return;
+                }
+                else if (isTop)
+                {
+                    m.Result = (IntPtr)HTTOP;
+                    return;
+                }
+                else if (isBottom)
+                {
+                    m.Result = (IntPtr)HTBOTTOM;
+                    return;
                 }
                 else
                 {
-                    if (clientPoint.X <= RESIZE_HANDLE_SIZE)
-                        m.Result = (IntPtr)HTBOTTOMLEFT;
-                    else if (clientPoint.X < (Size.Width - RESIZE_HANDLE_SIZE))
-                        m.Result = (IntPtr)HTBOTTOM;
-                    else
-                        m.Result = (IntPtr)HTBOTTOMRIGHT;
+                    m.Result = (IntPtr)HTCLIENT;
+                    return;
                 }
-                return;
             }
 
             base.WndProc(ref m);
@@ -124,6 +158,8 @@ namespace pdv
         {
 
         }
+
+
     }
 
 }
