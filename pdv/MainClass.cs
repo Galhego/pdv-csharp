@@ -20,7 +20,7 @@ namespace pdv
         {
             bool isValid = false;
 
-            string qry = "SELECT * FROM usuario WHERE usuario = @user AND senha = @pass";
+            string qry = "SELECT * FROM funcionarios WHERE nm_funcionario = @user AND cd_senha_funcionario = @pass";
 
             if (con.State != ConnectionState.Open)
                 con.Open();

@@ -54,7 +54,7 @@ namespace pdv
                 else
                 {
                     this.Hide();
-                    frmMain frm = new frmMain();
+                    FrmMain frm = new FrmMain();
                     frm.Show();
                 }
             }
