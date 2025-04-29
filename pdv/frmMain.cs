@@ -22,6 +22,7 @@ namespace pdv
         private const int WM_NCLBUTTONDOWN = 0xA1;
         private const int HTCAPTION = 0x2;
 
+        //metodo construtor
         public FrmMain()
         {
             InitializeComponent();
@@ -29,6 +30,7 @@ namespace pdv
             this.Padding = new Padding(1);
 
         }
+
         // Meio para movimentar e maximizar a tela pelo header
         private void Form_MouseDown(object sender, MouseEventArgs e)
         {
@@ -60,9 +62,22 @@ namespace pdv
 
         }
 
+        public  void AddControls(Form f)
+        {
+            centerPanel.Controls.Clear();
+            f.Dock = DockStyle.Fill;
+            f.TopLevel = false;
+            centerPanel.Controls.Add(f);
+            f.Show();
+        }
+
+
+
+        //Criando variavel para manter tamanho da tela
         private Rectangle previousBounds;
         private bool isMaximized = false;
 
+        //Método para alternar entre maximizar e restaurar a tela 
         private void AlternarMaximizacao()
         {
             if (!isMaximized)
@@ -99,7 +114,7 @@ namespace pdv
         {
             this.WindowState = FormWindowState.Minimized;
         }
-
+        //metodo para redimensionar 
         protected override void WndProc(ref Message m)
         {
             const int WM_NCHITTEST = 0x84;
@@ -180,7 +195,20 @@ namespace pdv
 
         }
 
+        private void btnVendas_Click(object sender, EventArgs e)
+        {
+            
+        }
 
+        private void btnHome_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+            lblUser.Text = MainClass.USER; // Exibe o nome do usuário no label
+        }
     }
 
 }

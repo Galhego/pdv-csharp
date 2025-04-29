@@ -37,11 +37,22 @@ namespace pdv
             if (dt.Rows.Count > 0)
             {
                 isValid = true;
+                USER = dt.Rows[0]["nm_funcionario"].ToString(); // Armazena o nome do usuário
             }
 
             con.Close();  // fecha a conexão depois
 
             return isValid;
+        }
+
+
+        //Criar uma propriedade para armazenar o nome do usuário
+        public static string user;
+
+        public static string USER
+        {
+            get { return user; }
+            set { user = value; }
         }
     }
 }
