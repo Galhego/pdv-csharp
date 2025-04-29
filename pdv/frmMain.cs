@@ -29,7 +29,7 @@ namespace pdv
             this.Padding = new Padding(1);
 
         }
-
+        // Meio para movimentar e maximizar a tela pelo header
         private void Form_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -37,10 +37,7 @@ namespace pdv
                 if (e.Clicks == 2)
                 {
                     // Clique duplo detectado
-                    if (this.WindowState == FormWindowState.Normal)
-                        this.WindowState = FormWindowState.Maximized;
-                    else
-                        this.WindowState = FormWindowState.Normal;
+                    AlternarMaximizacao();
                 }
                 else
                 {
@@ -63,14 +60,38 @@ namespace pdv
 
         }
 
+        private Rectangle previousBounds;
+        private bool isMaximized = false;
+
+        private void AlternarMaximizacao()
+        {
+            if (!isMaximized)
+            {
+                previousBounds = this.Bounds;
+                MaximizarSemCobrirBarraDeTarefas();
+                isMaximized = true;
+            }
+            else
+            {
+                this.Bounds = previousBounds;
+                isMaximized = false;
+            }
+        }
 
         //Botão de maximizar
         private void btnMax_Click(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Normal)
-                this.WindowState = FormWindowState.Maximized;
-            else
-                this.WindowState = FormWindowState.Normal;
+            AlternarMaximizacao();
+        }
+        
+        private void MaximizarSemCobrirBarraDeTarefas()
+        {
+            this.WindowState = FormWindowState.Normal; // Garante que não esteja em modo Maximized
+            this.FormBorderStyle = FormBorderStyle.None;
+
+            Rectangle areaTrabalho = Screen.FromHandle(this.Handle).WorkingArea;
+            this.Location = areaTrabalho.Location;
+            this.Size = areaTrabalho.Size;
         }
 
         //Botão de Mimizar
