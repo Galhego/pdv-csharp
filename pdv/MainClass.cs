@@ -20,7 +20,7 @@ namespace pdv
         {
             bool isValid = false;
 
-            string qry = "SELECT * FROM funcionarios WHERE nm_funcionario = @user AND cd_senha_funcionario = @pass";
+            string qry = "SELECT * FROM usuario WHERE usuario = @user AND senha = @pass";
 
             if (con.State != ConnectionState.Open)
                 con.Open();
@@ -37,7 +37,7 @@ namespace pdv
             if (dt.Rows.Count > 0)
             {
                 isValid = true;
-                USER = dt.Rows[0]["nm_funcionario"].ToString(); // Armazena o nome do usuário
+                USER = dt.Rows[0]["usuario"].ToString(); // Armazena o nome do usuário
             }
 
             con.Close();  // fecha a conexão depois
